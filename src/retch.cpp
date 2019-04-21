@@ -1,47 +1,51 @@
 // standard
 #include <iostream>
+#include <stdlib.h>
 
 // External
 #include <optparse.hpp>
-#include <GLT/Window.hpp>
 
 // Internal
 #include "Utils/Buffer2D.hpp"
+#include "Window/Window.hpp"
 
 
 // Add command line optioons to the option parser
 void AddOptions(OptionParser& opt) {
   opt.Add(Option("displaywidth", 'w', ARG_TYPE_INT,
                  "Set width of the render area",
-                 {"480"}));
+                 {"512"}));
   opt.Add(Option("displayheight", 'h', ARG_TYPE_INT,
                  "Set height of the render area",
-                 {"320"}));
-}
-
-
-// Draw a pixel buffer to the display
-void DrawBuffer(GLT::Window& window, retch::Buffer2D<glm::vec3>& pixels) {
-
+                 {"512"}));
 }
 
 
 int main(int argc, char **argv) {
-  OptionParser opt(argc, argv, "Simple renderer from scratch");
+  OptionParser opt(argc, argv, "Simple 3d renderer from scratch");
   AddOptions(opt);
 
   // Get display parameters and open our window
   int width = opt.Get("displaywidth");
   int height = opt.Get("displayheight");
-  GLT::Window window(width, height, "retch");
-  window.EnableFpsCounter();
+  retch::Window window(width, height, "retch");
 
-  // Create raw pixel buffers for the software renderer
+  // Create raw pixel buffers for the renderer
   retch::Buffer2D<glm::vec4> frameBuffer(width, height);
   retch::Buffer2D<float> depthBuffer(width, height);
 
-  while(!window.ShouldClose()) {
-    DrawBuffer(window, frameBuffer);
+  // Set some random pixel colours (TEMPORARY, for testing)
+  for(int i = 0; i < width; i++) {
+    for(int j = 0; j < height; j++) {
+      frameBuffer[j][i].x = (float)(rand() % 255) / 255;
+      frameBuffer[j][i].y = (float)(rand() % 255) / 255;
+      frameBuffer[j][i].z = (float)(rand() % 255) / 255;
+    }
+  }
+
+  // Draw loop
+  while(!window.Done()) {
+    window.Output(frameBuffer);
     window.Refresh();
   }
 
