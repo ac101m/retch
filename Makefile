@@ -23,9 +23,16 @@ $(OBJ_DIR)/%.cpp.o: %.cpp
 	$(CXX) $(COMPILE_FLAGS) $(INC_FLAGS) -c $< -o $@
 
 # Build target
-retch: $(OBJS)
+retch: move_shaders $(OBJS)
 	@$(MKDIR_P) $(dir $(TARGET_EXEC))
 	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(LD_FLAGS)
+
+# Simple target, collect glsl files in the shaders folder
+GLSL_SRCS := $(shell find $(SRC_DIR) -name *.glsl)
+SHADER_BIN_DIR := bin/shaders
+move_shaders:
+	@$(MKDIR_P) $(SHADER_BIN_DIR)
+	cp $(GLSL_SRCS) $(SHADER_BIN_DIR)
 
 # Build everything
 all: retch
