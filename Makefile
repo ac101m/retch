@@ -4,11 +4,13 @@ TARGET_EXEC ?= bin/retch
 # Directory controls
 OBJ_DIR ?= build
 SRC_DIR ?= src
+INC_DIRS ?= src include
 
 # Compiler configuration
 CXX := g++
 COMPILE_FLAGS ?= -MMD -MP -m64 -std=c++14 -Wall -O3
-LD_FLAGS ?= -loptparse
+INC_FLAGS ?= -Iinclude -Isrc
+LD_FLAGS ?= -loptparse -lgltools -lGLEW -lglfw -lGL
 
 # Enumerate sources
 SRCS := $(shell find $(SRC_DIR) -name *.cpp)
@@ -18,7 +20,7 @@ DEPS := $(SUB_OBJS:.o=.d)
 # Object compilation
 $(OBJ_DIR)/%.cpp.o: %.cpp
 	@$(MKDIR_P) $(dir $@)
-	$(CXX) $(COMPILE_FLAGS) -c $< -o $@
+	$(CXX) $(COMPILE_FLAGS) $(INC_FLAGS) -c $< -o $@
 
 # Build target
 retch: $(OBJS)
