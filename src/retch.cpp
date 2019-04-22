@@ -12,12 +12,15 @@
 
 // Add command line optioons to the option parser
 void AddOptions(OptionParser& opt) {
-  opt.Add(Option("displaywidth", 'w', ARG_TYPE_INT,
+  opt.Add(Option("displayx", 'x', ARG_TYPE_INT,
                  "Set width of the render area",
-                 {"512"}));
-  opt.Add(Option("displayheight", 'h', ARG_TYPE_INT,
+                 {"640"}));
+  opt.Add(Option("displayy", 'y', ARG_TYPE_INT,
                  "Set height of the render area",
-                 {"512"}));
+                 {"480"}));
+  opt.Add(Option("drawratio", 'r', ARG_TYPE_FLOAT,
+                 "Ratio of render to window size",
+                 {"1.0"}));
 }
 
 
@@ -26,17 +29,20 @@ int main(int argc, char **argv) {
   AddOptions(opt);
 
   // Get display parameters and open our window
-  int width = opt.Get("displaywidth");
-  int height = opt.Get("displayheight");
-  retch::Window window(width, height, "retch");
+  int displayx = opt.Get("displayx");
+  int displayy = opt.Get("displayy");
+  retch::Window window(displayx, displayy, "retch");
 
   // Create raw pixel buffers for the renderer
-  retch::Buffer2D<glm::vec4> frameBuffer(width, height);
-  retch::Buffer2D<float> depthBuffer(width, height);
+  float drawRatio = opt.Get("drawratio");
+  int renderx = (float)displayx * drawRatio;
+  int rendery = (float)displayy * drawRatio;
+  retch::Buffer2D<glm::vec4> frameBuffer(renderx, rendery);
+  retch::Buffer2D<float> depthBuffer(renderx, rendery);
 
   // Set some random pixel colours (TEMPORARY, for testing)
-  for(int i = 0; i < width; i++) {
-    for(int j = 0; j < height; j++) {
+  for(int i = 0; i < renderx; i++) {
+    for(int j = 0; j < rendery; j++) {
       frameBuffer[j][i].x = (float)(rand() % 255) / 255;
       frameBuffer[j][i].y = (float)(rand() % 255) / 255;
       frameBuffer[j][i].z = (float)(rand() % 255) / 255;

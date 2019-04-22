@@ -24,15 +24,18 @@ Window::Window(int const width, int const height, std::string const name) {
   this->fbTexture = std::shared_ptr<GLT::Texture>(
     new GLT::Texture(width, height, data));
 
-  // Vertex positions and UVs
-  std::vector<GLT::vertex_t> vertices = {
-    {glm::vec3(-1,-1, 0), glm::vec2(1, 1)},
-    {glm::vec3( 1,-1, 0), glm::vec2(1, 0)},
-    {glm::vec3(-1, 1, 0), glm::vec2(0, 1)},
-    {glm::vec3( 1, 1, 0), glm::vec2(0, 0)}};
+  // Set up texture filtering
+  this->fbTexture->Parameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  this->fbTexture->Parameteri(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+  // Vertex positions, UVs and indices
+  std::vector<GLT::vertex_t> vertices = {
+    {glm::fvec3(-1,-1, 0), glm::fvec2(0.0001, 0.0001)},
+    {glm::fvec3( 1,-1, 0), glm::fvec2(1.0001, 0.0001)},
+    {glm::fvec3(-1, 1, 0), glm::fvec2(0.0001, 1.0001)},
+    {glm::fvec3( 1, 1, 0), glm::fvec2(1.0001, 1.0001)}};
   std::vector<unsigned> const indices = {
-    0, 1, 2, 2, 1, 3};
+    0, 1, 2, 3, 2, 1};
 
   // Create mesh to map the frame buffer texture to
   this->mesh = std::shared_ptr<GLT::Mesh>(
@@ -56,7 +59,8 @@ void Window::Output(Buffer2D<glm::vec4>& frameBuffer) {
   }
 
   // Load the data onto the GPU via a texture
-  this->fbTexture->SetData(this->width, this->height, rawData);
+  this->fbTexture->SetData(
+    frameBuffer.Width(), frameBuffer.Height(), rawData);
 
   // Make the draw call
   glm::mat4 m(1.0f);
