@@ -6,8 +6,6 @@ using namespace retch;
 
 
 Window::Window(int const width, int const height, std::string const name) {
-  this->width = width;
-  this->height = height;
 
   // Create window
   this->gltWindow = std::shared_ptr<GLT::Window>(

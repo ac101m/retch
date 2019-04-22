@@ -17,9 +17,6 @@ namespace retch {
 
   class Window {
     private:
-      int width;
-      int height;
-
       // Pointers required due to lack of
       std::shared_ptr<GLT::Window> gltWindow;       // Underlying opengl window
       std::shared_ptr<GLT::ShaderProgram> shader;   // Shader program for rendering
@@ -31,6 +28,9 @@ namespace retch {
 
       bool Done(void) {return this->gltWindow->ShouldClose();}
       void Refresh(void);
+
+      int Width() {return this->gltWindow->GetWindowSize().x;}
+      int Height() {return this->gltWindow->GetWindowSize().y;}
 
       void Output(Buffer2D<glm::vec4>& frameBuffer);
   };
