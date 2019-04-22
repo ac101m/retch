@@ -1,7 +1,7 @@
 #ifndef _RETCH_CAMERA_INCLUDED
 #define _RETCH_CAMERA_INCLUDED
 
-
+// External
 #include <glm/glm.hpp>
 
 
@@ -10,16 +10,16 @@ namespace retch {
   class Camera {
     private:
       // View matrix parameters
-      glm::vec3 up_cs;
-      glm::vec3 right_cs;
-      glm::vec3 forward_cs;
+      glm::vec3 up;
+      glm::vec3 right;
+      glm::vec3 forward;
       glm::vec3 position;
 
       // Projection matrix parameters
       float fov;
-      float aspectRatio;
-      float minDistance;
-      float maxDistance;
+      float viewRatio;
+      float zMin;
+      float zMax;
 
   //====[METHODS]==============================================================//
 
