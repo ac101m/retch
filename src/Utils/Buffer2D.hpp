@@ -4,6 +4,9 @@
 // Standard
 #include <vector>
 
+// External
+#include "glm/glm.hpp"
+
 
 namespace retch {
 
@@ -30,6 +33,13 @@ namespace retch {
       }
     }
 
+    // Initialise the buffer
+    void Clear(T initPattern) {
+      for(unsigned i = 0; i < dataVector.size(); i++) {
+        dataVector[i] = initPattern;
+      }
+    }
+
     // Overloaded access operator
     T*& operator[](int const i) {
       return this->index[i];
@@ -41,6 +51,7 @@ namespace retch {
     // Width and height gets
     unsigned Width(void) {return this->width;}
     unsigned Height(void) {return this->height;}
+    glm::uvec2 Size(void) {return glm::uvec2(this->width, this->height);}
   };
 
 } // namespace retch
