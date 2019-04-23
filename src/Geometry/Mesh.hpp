@@ -18,6 +18,7 @@ namespace retch {
 
 //====[METHODS]==============================================================//
 
+    Mesh(std::string const path);
     Mesh(std::vector<Vertex> const vertices);
     Mesh(std::vector<Vertex> const vertices,
          std::vector<unsigned> const indices);

@@ -3,6 +3,54 @@ using namespace retch;
 
 // Standard
 #include <iostream>
+#include <fstream>
+#include <sstream>
+
+
+// Load mesh from path
+Mesh::Mesh(std::string const path) {
+  std::ifstream fs(path);
+  std::string line;
+
+  // Iterate over lines in file
+  while(std::getline(fs, line)) {
+    if(line.size() > 0) {
+      std::stringstream ss(&line[1]);
+
+      Vertex v;
+      unsigned idx0, idx1, idx2;
+
+      switch(line[0]) {
+        case 'v':     // This line represents a vertex
+          ss >> v.position.x >> v.position.y >> v.position.z;
+          this->vertices.push_back(v);
+          break;
+
+        case 'f':     // This line represents a triangle
+          ss >> idx0 >> idx1 >> idx2;
+          this->indices.push_back(idx2 - 1);
+          this->indices.push_back(idx1 - 1);
+          this->indices.push_back(idx0 - 1);
+          break;
+
+        default:      // Line identifier not recognised
+          std::cout << "Error, '" << path;
+          std::cout << "', line identifier '" << line[0];
+          std::cout << "' not recognised\n";
+          exit(1);
+      }
+    }
+  }
+
+  // Check continuity of indices
+  for(unsigned i = 0; i < this->indices.size(); i++) {
+    if(this->indices[i] >= this->vertices.size()) {
+      std::cout << "Error, index out of bounds: ";
+      std::cout << this->indices[i] << ":" << this->vertices.size() << "\n";
+      exit(1);
+    }
+  }
+}
 
 
 // Unindexed list of vertices
