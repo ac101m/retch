@@ -15,7 +15,7 @@ LD_FLAGS ?= -loptparse -lgltools -lGLEW -lglfw -lGL
 # Enumerate sources
 SRCS := $(shell find $(SRC_DIR) -name *.cpp)
 OBJS := $(SRCS:%=$(OBJ_DIR)/%.o)
-DEPS := $(SUB_OBJS:.o=.d)
+DEPS := $(OBJS:.o=.d)
 
 # Object compilation
 $(OBJ_DIR)/%.cpp.o: %.cpp
