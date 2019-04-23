@@ -1,10 +1,12 @@
 # Release targets
-TARGET_EXEC ?= bin/retch
+TARGET_EXEC ?= retch
 
 # Directory controls
+BIN_DIR ?= bin
 OBJ_DIR ?= build
 SRC_DIR ?= src
 INC_DIRS ?= src include
+RESOURCE_DIR ?= data
 
 # Compiler configuration
 CXX := g++
@@ -23,19 +25,17 @@ $(OBJ_DIR)/%.cpp.o: %.cpp
 	$(CXX) $(COMPILE_FLAGS) $(INC_FLAGS) -c $< -o $@
 
 # Build target
-retch: move_shaders $(OBJS)
-	@$(MKDIR_P) $(dir $(TARGET_EXEC))
-	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(LD_FLAGS)
+release: copy_resources $(OBJS)
+	@$(MKDIR_P) $(BIN_DIR)
+	$(CXX) $(OBJS) -o $(BIN_DIR)/$(TARGET_EXEC) $(LD_FLAGS)
 
-# Simple target, collect glsl files in the shaders folder
-GLSL_SRCS := $(shell find $(SRC_DIR) -name *.glsl)
-SHADER_BIN_DIR := bin/shaders
-move_shaders:
-	@$(MKDIR_P) $(SHADER_BIN_DIR)
-	cp $(GLSL_SRCS) $(SHADER_BIN_DIR)
+# Collect all resource files in the bin directors
+copy_resources:
+	@$(MKDIR_P) $(BIN_DIR)
+	cp -r $(RESOURCE_DIR) $(BIN_DIR)
 
 # Build everything
-all: retch
+all: release
 
 # Clean, be careful with this
 .PHONY: clean

@@ -14,8 +14,8 @@ Window::Window(int const width, int const height, std::string const name) {
   // Create shader program
   this->shader = std::shared_ptr<GLT::ShaderProgram>(
     new GLT::ShaderProgram({
-      GLT::Shader(GL_VERTEX_SHADER, "shaders/vs.glsl"),
-      GLT::Shader(GL_FRAGMENT_SHADER, "shaders/fs.glsl")}));
+      GLT::Shader(GL_VERTEX_SHADER, "data/Shaders/vs.glsl"),
+      GLT::Shader(GL_FRAGMENT_SHADER, "data/Shaders/fs.glsl")}));
 
   // Create the frame buffer texture
   std::vector<unsigned char> data(width * height * 3);
