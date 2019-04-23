@@ -27,8 +27,8 @@ namespace retch {
     void ComputeTangentSpaceBasis(void);
 
     // Access operators (so we can treat this like an std::vector)
-    inline Vertex& operator[](int i) {return vertices[indices[i]];}
-    inline unsigned size(void) {return this->indices.size();}
+    Vertex& operator[](int const i) {return vertices[indices[i]];}
+    unsigned Size(void) const {return this->indices.size();}
   };
 
 } // namespace retch
