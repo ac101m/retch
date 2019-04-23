@@ -11,13 +11,13 @@ Camera::Camera(void) :
   up(glm::vec3(0, 1, 0)),
   right(glm::vec3(1, 0, 0)),
   forward(glm::vec3(0, 0, 1)),
-  position(glm::vec3(0, 0, -2)) {
+  position(glm::vec3(0, 0, 0)) {
 
   // Set up view matrix parameters
-  this->fov = 90.0;
-  this->viewRatio = 1.0;
-  this->zMin = 0.1;
-  this->zMax = 1000;
+  this->fov = 45.0f;
+  this->viewRatio = 1.0f;
+  this->zMin = 0.1f;
+  this->zMax = 100.0f;
 
   // Update view and projection matrices
   this->UpdateProjMat();
@@ -37,4 +37,16 @@ void Camera::UpdateProjMat(void) {
   this->projMat = glm::perspective(
     this->fov, this->viewRatio,
     this->zMin, this->zMax);
+}
+
+
+void Camera::SetViewRatio(float const ratio) {
+  this->viewRatio = ratio;
+  this->UpdateProjMat();
+}
+
+
+void Camera::SetPosition(glm::vec3 const position) {
+  this->position = position;
+  this->UpdateViewMat();
 }
