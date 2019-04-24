@@ -25,7 +25,7 @@ namespace retch {
 //====[METHODS]==============================================================//
 
     // Convert render coordinates into framebuffer coordinates
-    inline glm::uvec2 PixelIndex(glm::vec2& pos, glm::uvec2& bufferSize) {
+    inline glm::ivec2 PixelIndex(glm::vec2& pos, glm::ivec2& bufferSize) {
       unsigned x = ((pos.x + 1) / 2) * (float)bufferSize.x;
       unsigned y = ((pos.y + 1) / 2) * (float)bufferSize.y;
       return glm::ivec2(x, y);
@@ -33,7 +33,7 @@ namespace retch {
 
 
     // Convert pixel position to render coordinates
-    inline glm::vec2 PixelPosition(glm::uvec2& pos, glm::uvec2& bufferSize) {
+    inline glm::vec2 PixelPosition(glm::ivec2& pos, glm::ivec2& bufferSize) {
       float x = (((float)pos.x / (float)bufferSize.x) * 2.0f) - 1.0f;
       float y = (((float)pos.y / (float)bufferSize.y) * 2.0f) - 1.0f;
       return glm::vec2(x, y);
@@ -68,14 +68,19 @@ namespace retch {
         std::max(v0.y, std::max(v1.y, v2.y)));
 
       // Convert to screen coordinates
-      glm::uvec2 fbSize = frameBuffer.Size();
-      glm::uvec2 pxMin = PixelIndex(min, fbSize);
-      glm::uvec2 pxMax = PixelIndex(max, fbSize);
+      glm::ivec2 fbSize = frameBuffer.Size();
+      glm::ivec2 pxMin = PixelIndex(min, fbSize);
+      glm::ivec2 pxMax = PixelIndex(max, fbSize);
+
+      pxMin.x = std::max<int>(pxMin.x, 0);
+      pxMin.y = std::max<int>(pxMin.y, 0);
+      pxMax.x = std::min<int>(pxMax.x, fbSize.x - 1);
+      pxMax.y = std::min<int>(pxMax.y, fbSize.y - 1);
 
       // Rasterisation operation
-      for(unsigned j = pxMin.y; j <= pxMax.y; j++) {
-        for(unsigned i = pxMin.x; i <= pxMax.x; i++) {
-          glm::uvec2 pxCurrent = glm::uvec2(i, j);
+      for(int j = pxMin.y; j <= pxMax.y; j++) {
+        for(int i = pxMin.x; i <= pxMax.x; i++) {
+          glm::ivec2 pxCurrent = glm::ivec2(i, j);
           glm::vec2 px = PixelPosition(pxCurrent, fbSize);
 
           bool inside = true;
