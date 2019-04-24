@@ -1,6 +1,9 @@
 // standard
 #include <iostream>
-#include <stdlib.h>
+#include <iomanip>
+#include <chrono>
+#include <sstream>
+using namespace std::chrono;
 
 // External
 #include <optparse.hpp>
@@ -119,16 +122,42 @@ int main(int argc, char **argv) {
   teapot.ComputeNormals();
   teapot.MergeVertices(1.0, 0.01, 0);
 
+  // Timing variables
+  float tClear = 0.0f;
+  float tDraw = 0.0f;
+  float tOutput = 0.0f;
+  float tExpAvg = 0.99f;
+
   // Draw loop
   while(!window.Done()) {
+    steady_clock::time_point tStart = steady_clock::now();
+
+    // Clear render buffers
     frameBuffer.Clear(glm::vec4(0.0f));
     depthBuffer.Clear(1.0f);
+    tClear = tClear * tExpAvg + (1.0f - tExpAvg) *
+      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1000.0f;
 
+    // Set uniforms and make draw calls
     uniforms.mMx = glm::rotate(uniforms.mMx, (float)0.002, glm::vec3(0, 1, 0));
     uniforms.mvpMx = camera.projMat * camera.viewMat * uniforms.mMx;
     shader.Draw(frameBuffer, depthBuffer, uniforms, teapot);
+    tDraw = tDraw * tExpAvg + (1.0f - tExpAvg) *
+      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1000.0f;
 
+    // Display the frame buffer
     window.Output(frameBuffer);
+    tOutput = tOutput * tExpAvg + (1.0f - tExpAvg) *
+      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1000.0f;
+
+    // Display timing information in the window title bar
+    std::stringstream ss;
+    ss << "retch: render (ms) [" << std::fixed << std::setprecision(2);
+    ss << tClear << ", ";
+    ss << tDraw - tClear << ", ";
+    ss << tOutput - tDraw << "] [";
+    ss << tOutput << "]";
+    window.SetTitle(ss.str());
     window.Refresh();
   }
 
