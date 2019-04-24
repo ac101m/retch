@@ -81,6 +81,14 @@ Mesh::Mesh(
 }
 
 
+// Remove vertices not pointed at by any indices
+void Mesh::PruneVertices(void) {
+  for(unsigned i = 0; i < this->indices.size(); i++) {
+
+  }
+}
+
+
 // Compute normals automatically
 void Mesh::ComputeNormals(void) {
 
@@ -104,5 +112,40 @@ void Mesh::ComputeNormals(void) {
   // Normalise vertex normals
   for(unsigned i = 0; i < this->vertices.size(); i++) {
     this->vertices[i].normal = glm::normalize(this->vertices[i].normal);
+  }
+}
+
+
+// Merge two individual vertices
+void Mesh::MergeVertices(Vertex& v0, Vertex& v1) {
+  v0.position = (v0.position + v1.position) / 2.0f;
+  v0.uv = (v0.uv + v1.uv) / 2.0f;
+  v0.normal = glm::normalize(v0.normal + v1.normal);
+  v0.tangent =  glm::normalize(v0.tangent + v1.tangent);
+  v0.bitangent =  glm::normalize(v0.bitangent + v1.bitangent);
+  v1 = v0;
+}
+
+
+// Merge like vertices based on thresholds
+void Mesh::MergeVertices(
+  float const naThreshold,
+  float const dpThreshold,
+  float const uvThreshold) {
+
+  for(unsigned i = 0; i < this->vertices.size(); i++) {
+    for(unsigned j = 0; j < i; j++) {
+      float na = glm::acos(glm::dot(
+        this->vertices[i].normal, this->vertices[j].normal));
+      float dp = glm::length(
+        this->vertices[i].position - this->vertices[j].position);
+      float duv = glm::length(
+        this->vertices[i].uv - this->vertices[j].uv);
+
+      // If thresholds are met, merge the vertices
+      if(dp <= dpThreshold && na <= naThreshold && duv <= uvThreshold) {
+        this->MergeVertices(this->vertices[i], this->vertices[j]);
+      }
+    }
   }
 }

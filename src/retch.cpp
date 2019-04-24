@@ -117,6 +117,7 @@ int main(int argc, char **argv) {
   retch::Mesh triangle = GenTestMesh();
   retch::Mesh teapot("data/Objects/Teapot.obj");
   teapot.ComputeNormals();
+  teapot.MergeVertices(1.0, 0.01, 0);
 
   // Draw loop
   while(!window.Done()) {
