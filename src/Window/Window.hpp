@@ -26,6 +26,8 @@ namespace retch {
   public:
     Window(int const width, int const height, std::string const name);
 
+    void SetTitle(std::string const title) {this->gltWindow->SetTitle(title);}
+
     bool Done(void) {return this->gltWindow->ShouldClose();}
     void Refresh(void);
 
