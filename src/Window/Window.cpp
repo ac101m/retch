@@ -38,8 +38,6 @@ Window::Window(int const width, int const height, std::string const name) {
   // Create mesh to map the frame buffer texture to
   this->mesh = std::shared_ptr<GLT::Mesh>(
     new GLT::Mesh(vertices, indices, {*this->fbTexture}));
-
-  this->gltWindow->EnableFpsCounter();
 }
 
 
