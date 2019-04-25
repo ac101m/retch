@@ -102,7 +102,7 @@ void Mesh::ComputeNormals(void) {
 
     glm::vec3 faceNormal = glm::cross(
       v[1]->position - v[0]->position,
-      v[2]->position - v[0]->position);
+      v[0]->position - v[2]->position);
 
     for(unsigned j = 0; j < 3; j++) {
       v[j]->normal += glm::normalize(faceNormal);
