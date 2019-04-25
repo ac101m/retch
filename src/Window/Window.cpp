@@ -49,9 +49,9 @@ void Window::Output(Buffer2D<glm::vec4>& frameBuffer) {
     frameBuffer.Width() * frameBuffer.Height() * 3);
 
   for(unsigned i = 0; i < frameBuffer.Width() * frameBuffer.Height(); i++) {
-    rawData[(i * 3) + 0] = frameBuffer.data()[i].x * 255;
-    rawData[(i * 3) + 1] = frameBuffer.data()[i].y * 255;
-    rawData[(i * 3) + 2] = frameBuffer.data()[i].z * 255;
+    rawData[(i * 3) + 0] = glm::clamp(frameBuffer.data()[i].x, 0.0f, 1.0f) * 255;
+    rawData[(i * 3) + 1] = glm::clamp(frameBuffer.data()[i].y, 0.0f, 1.0f) * 255;
+    rawData[(i * 3) + 2] = glm::clamp(frameBuffer.data()[i].z, 0.0f, 1.0f) * 255;
   }
 
   // Load the data onto the GPU via a texture
