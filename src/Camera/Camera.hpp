@@ -38,6 +38,9 @@ namespace retch {
     // Camera property sets
     void SetViewRatio(float const ratio);
     void SetPosition(glm::vec3 const position);
+
+    // Property gets
+    glm::vec3 GetPosition(void) {return this->position;}
   };
 
 } // Namespace retch
