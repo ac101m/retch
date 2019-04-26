@@ -59,6 +59,13 @@ namespace retch {
       glm::vec3 v1 = glm::vec3(v[1]) / v[1].w;
       glm::vec3 v2 = glm::vec3(v[2]) / v[2].w;
 
+      // Backface culling check
+      if(glm::length(glm::cross(
+        glm::vec3(glm::vec2(v0), 0.0f) - glm::vec3(glm::vec2(v1), 0.0f),
+        glm::vec3(glm::vec2(v0), 0.0f) - glm::vec3(glm::vec2(v2), 0.0f))) < 0) {
+        return;
+      }
+
       // Get minimum and maximum coordinates for triangle
       glm::vec2 min = glm::vec2(
         std::min(v0.x, std::min(v1.x, v2.x)),
