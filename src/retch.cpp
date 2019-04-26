@@ -21,6 +21,7 @@ using namespace std::chrono;
 typedef struct {
   glm::mat4 mMx;
   glm::mat4 mvpMx;
+  glm::vec3 eyePos_ws;      // Position of camera in world space
   glm::vec3 aLightPow;      // Ambient light power
   glm::vec3 pLightPow;      // Point light power
   glm::vec3 pLightPos_ws;   // Point light position in worldspace
@@ -55,8 +56,14 @@ glm::vec4 FS(Uniforms_t& uniforms,RParams_t& fsIn) {
   float angle = std::max(glm::dot(fsIn.nml_ws, glm::normalize(dir)), 0.0f);
   glm::vec3 lDiffuse = angle * (uniforms.pLightPow / d2);
 
+  // Specular component
+  glm::vec3 eyeDir = glm::normalize(uniforms.eyePos_ws - fsIn.pos_ws);
+  glm::vec3 reflectDir = glm::reflect(-glm::normalize(dir), fsIn.nml_ws);
+  float spec = glm::pow(glm::max(glm::dot(eyeDir, reflectDir), 0.0f), 64.0f);
+  glm::vec3 lSpecular = spec * (uniforms.pLightPow / d2);
+
   // Add up lighting components
-  glm::vec3 lTotal = (lAmbient + lDiffuse) * uniforms.objectColour;
+  glm::vec3 lTotal = (lAmbient + lDiffuse + lSpecular) * uniforms.objectColour;
   return glm::vec4(lTotal, 1.0f);
 }
 
@@ -107,8 +114,8 @@ int main(int argc, char **argv) {
   Uniforms_t uniforms;
   uniforms.mMx = glm::mat4(1);
   uniforms.aLightPow = glm::vec3(0.1);
-  uniforms.pLightPow = glm::vec3(50);
-  uniforms.pLightPos_ws = glm::vec3(7, 7, 4);
+  uniforms.pLightPow = glm::vec3(12);
+  uniforms.pLightPos_ws = glm::vec3(-2, 3, -5);
   uniforms.objectColour = glm::vec3(1, 1, 1);
 
   // Set up the camera
@@ -139,6 +146,7 @@ int main(int argc, char **argv) {
       duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1000.0f;
 
     // Set uniforms and make draw calls
+    uniforms.eyePos_ws = camera.GetPosition();
     uniforms.mMx = glm::rotate(uniforms.mMx, (float)0.002, glm::vec3(0, 1, 0));
     uniforms.mvpMx = camera.projMat * camera.viewMat * uniforms.mMx;
     shader.Draw(frameBuffer, depthBuffer, uniforms, teapot);
