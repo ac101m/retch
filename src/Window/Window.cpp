@@ -19,8 +19,8 @@ Window::Window(int const width, int const height, std::string const name) {
 
   // Create the frame buffer texture
   std::vector<unsigned char> data(width * height * 3);
-  this->fbTexture = std::shared_ptr<GLT::Texture>(
-    new GLT::Texture(width, height, data));
+  this->fbTexture = std::shared_ptr<GLT::Texture2D>(
+    new GLT::Texture2D(width, height, data));
 
   // Set up texture filtering
   this->fbTexture->Parameteri(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -37,7 +37,7 @@ Window::Window(int const width, int const height, std::string const name) {
 
   // Create mesh to map the frame buffer texture to
   this->mesh = std::shared_ptr<GLT::Mesh>(
-    new GLT::Mesh(vertices, indices, {*this->fbTexture}));
+    new GLT::Mesh(vertices, indices, {this->fbTexture}));
 }
 
 
@@ -79,7 +79,9 @@ void GLT::Mesh::Draw(
   std::string name = "texture0";
   for(unsigned i = 0; i < this->textures.size(); i++) {
     name[7] = 48 + i;
-    shader.SetTexture(i, name, this->textures[i]);
+    glActiveTexture(GL_TEXTURE0 + i);
+    this->textures[i]->Bind();
+    shader.GetUniform(name).SetTex2D(i);
   }
 
   // Draw the things

@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
   float tClear = 0.0f;
   float tDraw = 0.0f;
   float tOutput = 0.0f;
-  float tExpAvg = 0.99f;
+  float tExpAvg = 1.0f;
 
   // Draw loop
   while(!window.Done()) {
@@ -142,21 +142,21 @@ int main(int argc, char **argv) {
     // Clear render buffers
     frameBuffer.Clear(glm::vec4(0.0f));
     depthBuffer.Clear(1.0f);
-    tClear = tClear * tExpAvg + (1.0f - tExpAvg) *
-      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1000.0f;
+    tClear = tClear * (1.0f - tExpAvg) + tExpAvg *
+      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1E3;
 
     // Set uniforms and make draw calls
     uniforms.eyePos_ws = camera.GetPosition();
     uniforms.mMx = glm::rotate(uniforms.mMx, (float)0.002, glm::vec3(0, 1, 0));
     uniforms.mvpMx = camera.projMat * camera.viewMat * uniforms.mMx;
     shader.Draw(frameBuffer, depthBuffer, uniforms, teapot);
-    tDraw = tDraw * tExpAvg + (1.0f - tExpAvg) *
-      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1000.0f;
+    tDraw = tDraw * (1.0f - tExpAvg) + tExpAvg *
+      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1E3;
 
     // Display the frame buffer
     window.Output(frameBuffer);
-    tOutput = tOutput * tExpAvg + (1.0f - tExpAvg) *
-      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1000.0f;
+    tOutput = tOutput * (1.0f - tExpAvg) + tExpAvg *
+      duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1E3;
 
     // Display timing information in the window title bar
     std::stringstream ss;
@@ -167,6 +167,10 @@ int main(int argc, char **argv) {
     ss << tOutput << "]";
     window.SetTitle(ss.str());
     window.Refresh();
+
+    // Change rolling average weighting based on render speed
+    tExpAvg =
+      (duration_cast<microseconds>(steady_clock::now() - tStart).count() / 1E6);
   }
 
   // El fin
