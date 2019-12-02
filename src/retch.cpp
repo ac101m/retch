@@ -97,6 +97,10 @@ int main(int argc, char **argv) {
   OptionParser opt(argc, argv, "Simple 3d renderer from scratch");
   AddOptions(opt);
 
+  // Set the correct opengl version
+  glfwWindowHint(GLFW_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_VERSION_MAJOR, 3);
+
   // Get display parameters and open our window
   int displayx = opt.Get("displayx");
   int displayy = opt.Get("displayy");
