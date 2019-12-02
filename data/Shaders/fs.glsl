@@ -7,8 +7,8 @@ uniform sampler2D texture0;
 in vec2 texturePos;
 
 // Outputs
-out vec4 gl_FragColor;
+out vec4 fragColor;
 
 void main() {
-  gl_FragColor = texture(texture0, texturePos);
+  fragColor = texture(texture0, texturePos);
 }
